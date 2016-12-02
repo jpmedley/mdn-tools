@@ -1,0 +1,14 @@
+[
+    RuntimeEnabled=Sensor,
+    Constructor(DOMString type, SensorReadingEventInit eventInitDict)
+] interface SensorReadingEvent : Event {
+    readonly attribute SensorReading reading;
+};
+
+
+[
+    RuntimeEnabled=ExperimentalStream,
+    DependentLifetime,
+] interface Stream {
+    readonly attribute DOMString type;
+};
