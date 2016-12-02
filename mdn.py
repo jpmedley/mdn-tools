@@ -2,7 +2,8 @@
 
 # mdn template -i interface -m member -t template
 # mdn templates -i interface -a member template [member template]1 ... [member template]n
-# mdn idl -f [idl_file | idl_foloder]
+# mdn idl -f [idl_file | idl_folder]
+# mdn idl -l [idl_file | idl_folder]
 
 # ToDos:
 #  Deal with inheritance from EventTarget: https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel
@@ -162,6 +163,17 @@ def ProcessIdlDirectory(idl_dir):
 			print f
 	# return data
 
+def ListIdl(idl_file):
+	data = GetInterfaceData(idl_file)
+	print("[DATA]", data)
+	return
+
+def listIdlDirectory(idl_dir):
+	for f in os.listdir(idl_dir):
+		if f.endswith('.idl'):
+			print f
+	return
+
 
 if sys.argv[1] == 'template':
 	if len(sys.argv) < 8:
@@ -176,22 +188,28 @@ elif sys.argv[1] == 'templates':
 	CreateFilesFromArgs(sys.argv)
 
 elif sys.argv[1] == 'idl':
-	if (sys.argv[2] != '-f'):
-		raise Exception("The idl command requires a -f argument.")
 	idl_input = os.path.join(here, sys.argv[3])
 	is_valid_file = os.path.isfile(idl_input) or False
 	is_valid_dir = os.path.isdir(idl_input) or False
 	if (is_valid_file == is_valid_dir):
 		raise Exception("The idl command requries a valid file or directory")
-	if (is_valid_file):
-		ProcessIdl(idl_input)
-	elif (is_valid_dir):
-		ProcessIdlDirectory(idl_input)
+	if (sys.argv[2] != '-f') and (sys.argv[2] != '-l'):
+		raise Exception("The idl command requires either a -f or -l argument.")
+	if (sys.argv[2] == '-f'):
+		if (is_valid_file):
+			ProcessIdl(idl_input)
+		elif (is_valid_dir):
+			ProcessIdlDirectory(idl_input)
+	if (sys.argv[2] == '-l'):
+		if (is_valid_file):
+			ListIdl(idl_input)
+		elif (is_valid_dir):
+			ListIdlDirectory(idl_input)
 
 elif sys.argv[1] == 'help':
 	print "./mdn.py template -i interface -m member -t template"
 	print "./mdn.py templates -i interface -a member template [member template]1 ... [member template]n"
-	print "./mdn.py idl -f [idl_file | idl_foloder]"
+	print "./mdn.py idl [-f | -l] [idl_file | idl_foloder]"
 
 else:
 	raise Exception("Unrecognized command.")
