@@ -23,7 +23,7 @@ re_token = re.compile(r"(\[\[([\w\-\_:]+)\]\])")
 
 def CreateFile(template, member, data):
 	# print("[Creating File]", template, member, data)
-	tempPath = os.path.join(here, (template + ".html"))
+	tempPath = os.path.join(here, 'templates', (template + ".html"))
 	outPath = os.path.join(here, "out", member.partition('()')[0] + ".html")
 
 	tempFile = open(tempPath, 'r')
