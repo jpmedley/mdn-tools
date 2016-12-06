@@ -17,9 +17,17 @@ import sys
 #  'SomeMethodName': {'Key':'Value'}
 #}
 
-
 here = os.path.dirname(os.path.realpath(__file__))
 re_token = re.compile(r"(\[\[([\w\-\_:]+)\]\])")
+
+ddTemplate = getTemplate('dd')
+dlTemplate = getTemplate('dl')
+
+def getTemplate(name):
+	fileObj = open(os.path.join(here, 'templates', (name + '.frag')), 'r')
+	fileCnts = fileObj.read()
+	fileObj.close()
+	return FileCnts
 
 def CreateFile(template, member, data):
 	# print("[Creating File]", template, member, data)
