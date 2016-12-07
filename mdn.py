@@ -18,16 +18,17 @@ import sys
 #}
 
 here = os.path.dirname(os.path.realpath(__file__))
-re_token = re.compile(r"(\[\[([\w\-\_:]+)\]\])")
-
-ddTemplate = getTemplate('dd')
-dlTemplate = getTemplate('dl')
+# re_token = re.compile(r"(\[\[([\w\-\_:]+)\]\])") # v1
+re_token = re.compile(r"(\[\[(\w+:?[^]]+)\]\])")
 
 def getTemplate(name):
 	fileObj = open(os.path.join(here, 'templates', (name + '.frag')), 'r')
 	fileCnts = fileObj.read()
 	fileObj.close()
-	return FileCnts
+	return fileCnts
+
+ddTemplate = getTemplate('dd')
+dlTemplate = getTemplate('dl')
 
 def CreateFile(template, member, data):
 	# print("[Creating File]", template, member, data)
@@ -48,10 +49,18 @@ def CreateFile(template, member, data):
 				key = tokens[i][1]
 				if ('Shared:' in key):
 					if (not key in data):
-						response = raw_input(question.format(key, member))
+						q = key.partition(':')[2]
+						response = raw_input(question.format(q, member))
 						data.update({key: response})
 					line = line.replace(token, data[key])
 					# print data[key]
+				elif ('q:' in key):
+					statements = key.split(';')
+					response = raw_input('\n' + statements[0].partition(':')[2]).upper()
+					if response == 'N':
+						line = statements[2]
+					else:
+						line = statements[1]
 				else:
 					if (not member in data):
 						data[member] = {'Member': member}
