@@ -54,7 +54,7 @@ def CreateFile(template, member, data):
 						data.update({key: response})
 					line = line.replace(token, data[key])
 					# print data[key]
-				elif ('q:' in key):
+				elif ('yn:' in key):
 					statements = key.split(';')
 					response = raw_input('\n' + statements[0].partition(':')[2]).upper()
 					if response == 'N':
@@ -99,6 +99,15 @@ def CreateFilesFromData(data):
 			else:
 				data = CreateFile('method', key, data)
 
+# def GetNormalizedContents(contents):
+# 	for line in contents:
+# 		if line.startsWith('//')
+# 			re.sub(r'//[^\n]*', '', line)
+# 		if line == '\n':
+# 			re.sub(r'\n', '', line)
+
+
+
 
 
 def GetInterfaceData(idl_file):
@@ -108,14 +117,14 @@ def GetInterfaceData(idl_file):
 	re_int_object = re.compile(r"((?:\[[^\]]+\])?[^{]+\{[^}]+\})")
 	# ToDo: Partial interfaces shouldn't get an interface page.
 	# ToDo: Interface should get its properties, methods, and event handlers from the IDL instead of prompting.
-	re_int_name = re.compile(r"interface\s+([^\s]+)(?:[\s:]+([^\s{]+))?")
+	re_int_name = re.compile(r"interface +([^\s]+)(?:[\s:]+([^\s{]+))?")
 	re_mem_patterns = [r"(?:\[[^\s]+\]\s)?((?:readonly\s)?(?:attribute\s)(?:unrestricted\s)?)(\w+\??)\s(\w+);?$", r"\[[^\]]+\]\s(\w+\s)(\w+\([\w\s]*\));$"]
 	# Adding this to the above breaks the looping: , r"(?:\[[^\]]+\]\s)?(Promise<\w+>)\s(\w+)\(\);$"
 	idl = re_int_object.findall(idl_contents)[0]
 	# print idl
 	if idl:
 		interface_header = re_int_name.findall(idl)
-		# print interface_header
+		print interface_header
 		interface_name = interface_header[0][0]
 		# print interface_name
 		data = ({'Shared:Interface': interface_name})
@@ -138,32 +147,6 @@ def GetInterfaceData(idl_file):
 					data[member[1]] = {'Member': member[1]}
 					data[member[1]].update({'Return': member[0], 'Type': 'Method'})
 		return data
-
-
-
-	# idl = re_int_object.findall(idl_contents)
-	# print idl
-	# if idl:
-	# 	interface_name = idl[0][1]
-	# 	# print interface_name
-	# 	members_text = idl[0][3]
-	# 	# print ("[MEMBERS]", members_text)
-	# 	data = ({'Shared:Interface': interface_name})
-	# 	for mem_pattern in re_mem_patterns:
-	# 		re_mem_object = re.compile(mem_pattern, re.M)
-	# 		member_list = re_mem_object.findall(members_text)
-	# 		for member in member_list:
-	# 			if 'attribute' in member[0]:
-	# 				data[member[2]] = {'Member': member[2]}
-	# 				if 'readonly' in member[0]:
-	# 					readonly = 'read-only'
-	# 				else:
-	# 					readonly = ''
-	# 				data[member[2]].update({'Readonly': readonly, 'Type': 'Property', 'Return': member[2]})
-	# 			else:
-	# 				data[member[1]] = {'Member': member[1]}
-	# 				data[member[1]].update({'Return': member[0], 'Type': 'Method'})
-	# 	return data
 
 
 def ProcessIdl(idl_file):
