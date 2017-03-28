@@ -56,7 +56,10 @@ def CreateFile(template, member, data):
 					# print data[key]
 				elif ('yn:' in key):
 					statements = key.split(';')
-					response = raw_input('\n' + statements[0].partition(':')[2]).upper()
+					ynquestion = statements[0].partition(':')[2]
+					if ynquestion.startswith("'") or ynquestion.startswith('"'):
+						ynquestion = ynquestion[1:-1]
+					response = raw_input('\n' + ynquestion).upper()
 					if response == 'N':
 						line = statements[2]
 					else:
@@ -99,18 +102,39 @@ def CreateFilesFromData(data):
 			else:
 				data = CreateFile('method', key, data)
 
-# def GetNormalizedContents(contents):
-# 	for line in contents:
-# 		if line.startsWith('//')
-# 			re.sub(r'//[^\n]*', '', line)
-# 		if line == '\n':
-# 			re.sub(r'\n', '', line)
+def GetNormalizedContents(contents):
+	for line in contents:
+		if line.startsWith('//'):
+			re.sub(r'//[^\n]*', '', line)
+		if line == '\n':
+			re.sub(r'\n', '', line)
+
+def GetEnum(contents):
+	re_enum = re.compile(r"enum[^}]+};")
+	return re.findall(re_enum, contents)
+
+def GetInterface(contents):
+	re_interface = re.compile(r"\[[^\]]+\] interface[^}]+};")
+	return re.findall(re_interface, contents)
+
+# def GetInterfaceData(idl_file):
+# 	f = open(idl_file, 'r')
+# 	file_contents = f.read()
+# 	norm_contents = GetNormalizedContents(file_contents)
+# 	inferface = GetInterface(norm_contents)
+
+# 	re_method = re.compile(r"([^(\s]+\([^\)]+\))")
+
+# 	for line in interface:
+# 		if 'interface' in line:
+# 			interface = line.strip().split(' ')[2]
+# 			data = ({'Shared:Interface': interface})
+# 			continue
+# 		if re.match(re_method, line) != None:
+# 			pieces = line.split(' ')
 
 
-
-
-
-def GetInterfaceData(idl_file):
+def GetInterfaceData_(idl_file):
 	f = open(idl_file, 'r')
 	idl_contents = f.read()
 	# re_int_object = re.compile(r"(\[[^\]]+\][^{]+\{[^}]+\})")
