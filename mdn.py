@@ -10,6 +10,7 @@
 
 import os
 import re
+import subprocess
 import sys
 
 #{'Shared:Item1': text,
@@ -230,10 +231,20 @@ elif sys.argv[1] == 'idl':
 		elif (is_valid_dir):
 			ListIdlDirectory(idl_input)
 
+elif sys.argv[1] == 'open':
+	out = os.path.join(here, 'out')
+	out_list = [f for f in os.listdir(out) if os.path.isfile(os.path.join(out, f))]
+	out_list.remove('.DS_Store')
+	for i, file in enumerate(out_list):
+		out_list[i] = os.path.join(out, file)
+	call_list = ['atom'] + out_list
+	subprocess.call(call_list)
+
 elif sys.argv[1] == 'help':
 	print "./mdn.py template -i interface -m member -t template"
 	print "./mdn.py templates -i interface -a member template [member template]1 ... [member template]n"
 	print "./mdn.py idl [-f | -l] [idl_file | idl_foloder]"
+	print "./mdn.py open"
 
 else:
 	raise Exception("Unrecognized command.")
